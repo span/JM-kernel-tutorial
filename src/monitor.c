@@ -146,15 +146,76 @@ void monitor_write(char *c)
        monitor_put(c[i++]);
    }
 }
-
-// Write a hex value to the monitor
+// Outputs a hex value to the monitor
 void monitor_write_hex(u32int n)
 {
-   // TODO: implement this yourself!
+    s32int tmp;
+
+    monitor_write("0x");
+
+    char noZeroes = 1;
+
+    int i;
+    for (i = 28; i > 0; i -= 4)
+    {
+        tmp = (n >> i) & 0xF;
+        if (tmp == 0 && noZeroes != 0)
+        {
+            continue;
+        }
+    
+        if (tmp >= 0xA)
+        {
+            noZeroes = 0;
+            monitor_put (tmp-0xA+'a' );
+        }
+        else
+        {
+            noZeroes = 0;
+            monitor_put( tmp+'0' );
+        }
+    }
+  
+    tmp = n & 0xF;
+    if (tmp >= 0xA)
+    {
+        monitor_put (tmp-0xA+'a');
+    }
+    else
+    {
+        monitor_put (tmp+'0');
+    }
+
 }
 
-// Write a decimal value to the monitor
+// Outputs a dec value to the monitor
 void monitor_write_dec(u32int n)
 {
-   // TODO: implement this yourself!
+
+    if (n == 0)
+    {
+        monitor_put('0');
+        return;
+    }
+
+    s32int acc = n;
+    char c[32];
+    int i = 0;
+    while (acc > 0)
+    {
+        c[i] = '0' + acc%10;
+        acc /= 10;
+        i++;
+    }
+    c[i] = 0;
+
+    char c2[32];
+    c2[i--] = 0;
+    int j = 0;
+    while(i >= 0)
+    {
+        c2[i--] = c[j++];
+    }
+    monitor_write(c2);
+
 }
